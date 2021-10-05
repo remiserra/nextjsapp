@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: cicd-demo-
+spec:
+  serviceAccountName: build-bot
+  params:
+    - name: app-name
+      value: nextjs-rs
+    - name: source-repo
+      value: https://github.com/remiserra/nextjsapp
+    - name: image-repo
+      value: quay.io/remiserra/nextjsapp-rs
+  pipelineRef:
+    name: express-demo
+  workspaces:
+    - name: pipeline-shared-data
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 1Gi
+          accessModes:
+            - ReadWriteOnce
+    - name: production-repository
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
