@@ -57,10 +57,10 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: express-sample-app-pipeline-
+        generateName: cicd-pipeline-
       spec:
         pipelineRef:
-          name: express-demo
+          name: cicd-build-package-deploy
         serviceAccountName: build-bot
         params:
           - name: app-name
