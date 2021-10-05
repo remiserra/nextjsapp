@@ -1,22 +1,29 @@
-# Use node Docker image, version 16-alpine
-FROM quay.io/upslopeio/node-alpine
+FROM node:alpine as BUILD_IMAGE
 
-# From the documentation, "The WORKDIR instruction sets the working directory for any
-# RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile"
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# COPY package.json and package-lock.json into root of WORKDIR
-COPY package*.json ./
+COPY package.json yarn.lock ./
 
-# Executes commands
-RUN npm ci
+# install dependencies
+RUN yarn install --frozen-lockfile
 
-# Copies files from source to destination, in this case the root of the build context
-# into the root of the WORKDIR
 COPY . .
 
-# Document that this container exposes something on port 3000
-EXPOSE 3000
+# build
+RUN yarn build
 
-# Command to use for starting the application
-CMD ["npm", "run dev"]
+# remove dev dependencies
+RUN npm prune --production
+
+FROM node:alpine
+
+WORKDIR /app
+
+# copy from build image
+COPY --from=BUILD_IMAGE /app/package.json ./package.json
+COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
+COPY --from=BUILD_IMAGE /app/.next ./.next
+COPY --from=BUILD_IMAGE /app/public ./public
+
+EXPOSE 3000
+CMD ["yarn", "start"]
