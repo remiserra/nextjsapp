@@ -6,9 +6,9 @@ resources:
   - deploy.Task.yaml
   - cicd-pipeline.yaml
   - git-credentials.secret.yaml
+  - http://raw.githubusercontent.com/tektoncd/catalog/main/task/npm/0.1/npm.yaml
   - production-repository.ConfigMap.yaml
   - quayio-credentials.secret.yaml
   - save-configuration.Task.yaml
   - buildbot-serviceaccount.yaml
-#  - "https://raw.githubusercontent.com/tektoncd/catalog/main/task/npm/0.1/npm.yaml"
   - vcs-trigger.yaml
